@@ -35,8 +35,13 @@ where t.album_id = a.album_id
 group by a."name"
 
 -- 4) Все исполнители, которые не выпустили альбомы в 2020 году.
-select b."name", a.release_years from band b, album a, feat f 
-where EXTRACT(YEAR FROM a.release_years) != 2020 and b.band_id = f.band_id and a.album_id = f.album_id 
+select b."name" from band b
+where b."name" not in (
+	select b2."name" from band b2
+	join feat f on b2.band_id = f.band_id
+	join album a on a.album_id = f.album_id
+	where extract (year from a.release_years) = 2020
+);
 
 -- 5) Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами).
 select c."name" from collection c
